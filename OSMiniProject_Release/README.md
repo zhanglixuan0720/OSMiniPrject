@@ -4,10 +4,13 @@ C language
 CMake
 
 # Usage
-1.  open a terminal and change the directory to OSMiniProject_Release  
-2. create an empty directory  
+1. open a terminal and clone the files from github.  
 `
-mkdir build 
+git clone git@github.com:zhanglixuan0720/OSMiniPrject.git
+`  
+2. change the directory to OSMiniProject_Release and create an empty directory    
+`
+cd OSMiniProject/OSMiniProject_Release && mkdir build 
 `
 3. change your directory into OSMiniProject_Release/build  
 4.  compile the codes.  
