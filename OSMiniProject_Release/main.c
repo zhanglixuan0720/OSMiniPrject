@@ -3,7 +3,7 @@
 #include "Queue.h"
 #include <stdlib.h>
 int PCBRead(FILE *file, Queue *Q, int algorithm);                                   //read the pcb information from appointed file
-void PCBPrint(PCB *pcb);                                                            //print the pcb information
+void PCBPrint(QueueElement *e);                                                     //print the pcb information
 void SchedulePrint(Queue *ready_queue, Queue *finished_queue);                      //print the process id in ready queue and finished queue
 void PrintAllPCB(Queue *ready_queue, Queue *finished_queue);                        //print all pcb information in queues.
 void PrioritySchedule(Queue *ready_queue, Queue *finished_queue, int *system_time); // priority schedule method
@@ -15,14 +15,14 @@ int main(int argc, char **argv)
     Queue ready_queue, finished_queue;
     Queue *Q = (Queue *)malloc(sizeof(Queue)); //Q is crated for getting the created QueueElement
     FILE *pcb_file = NULL;
-
     InitQueue(&ready_queue);
     InitQueue(&finished_queue);
 
     pcb_file = fopen("../PCBFile.txt", "r");
+
     printf("Please input the schedule method you want to use (you can choose the 0: priority schedule, 1: fcfs schedule): ");
     scanf("%d", &algorithm);
-
+    printf("schedule algorithm: %d\n", algorithm);
     status = PCBRead(pcb_file, Q, algorithm);
 
     while (1)
@@ -54,6 +54,7 @@ int main(int argc, char **argv)
         }
 
         //system time print
+        printf("----------------------------------------------\n");
         printf("system time:  %d\n", system_time);
 
         ++system_time;
@@ -66,9 +67,11 @@ int main(int argc, char **argv)
             if (system_time > 1024 * 32)
             {
                 printf("Waiting two much time, Schedule process exit normally.\n");
+
                 break;
             }
-            printf("\033[2A"); // upwards two rows
+            printf("\033[3A"); // upwards three rows
+
             continue;
         }
 
@@ -125,10 +128,11 @@ int PCBRead(FILE *file, Queue *Q, int algorithm)
     return status;
 }
 
-void PCBPrint(PCB *pcb)
+void PCBPrint(QueueElement *e)
 {
+    PCB *pcb = e->pcb;
     // id priority arrive_time run_time used_time status
-    printf("%d\t%d\t\t%d\t\t%d\t\t%d\t\t", pcb->process_id, pcb->priority, pcb->arrive_time, pcb->run_time, pcb->used_time);
+    printf("%d\t%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t", pcb->process_id, e->key_word, pcb->priority, pcb->arrive_time, pcb->run_time, pcb->used_time);
     switch (pcb->process_status)
     {
     case 1:
@@ -155,7 +159,6 @@ void SchedulePrint(Queue *ready_queue, Queue *finished_queue)
     }
 
     printf("Ready Queue (ID):  ");
-
     while (q)
     {
         printf("%d    ", q->pcb->process_id);
@@ -177,12 +180,12 @@ void PrintAllPCB(Queue *ready_queue, Queue *finished_queue)
 {
     QueueElement e, *q;
     printf("PCB:\n");
-    printf("ID\tPriority\tArrive Time\tRun Time\tUsed Time\tStatus\n");
+    printf("ID\tKeyword\t\tPriority\tArrive Time\tRun Time\tUsed Time\tStatus\n");
     if (ready_queue->header)
     {
         e = *(ready_queue->header);
         e.pcb->process_status = Run;
-        PCBPrint(e.pcb);
+        PCBPrint(&e);
         q = e.next;
     }
     else
@@ -192,14 +195,14 @@ void PrintAllPCB(Queue *ready_queue, Queue *finished_queue)
 
     while (q)
     {
-        PCBPrint(q->pcb);
+        PCBPrint(q);
         q = q->next;
     }
 
     q = finished_queue->header;
     while (q)
     {
-        PCBPrint(q->pcb);
+        PCBPrint(q);
         q = q->next;
     }
 }
@@ -242,6 +245,6 @@ void FCFSSchedule(Queue *ready_queue, Queue *finished_queue, int *system_time)
     }
     else
     {
-        PushDe(ready_queue, e);
+        PushIn(ready_queue, e);
     }
 }

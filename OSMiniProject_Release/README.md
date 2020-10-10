@@ -22,7 +22,13 @@ cmake .. && make
 `
 ./MiniProject
 `
-
+7.  if you want to print the output into file and check them carefully, you can run  
+`
+./MiniProject | tee ../OutputFile.txt
+`  
+and you will get a output file in the directory: OSMiniProject_Release     
+## Note
+ if you run step 7, you are required to choose the algorithm number without prompt. I recommend you run step 6 before trying to run step 7 becease both of them require the same input and the step 6 will give you some prompt messages.
 # Author Information
 Name: Lixuan Zhang  
 E-mail: zhanglixuan0720@stu.xjtu.edu.cn
